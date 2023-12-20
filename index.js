@@ -1,6 +1,8 @@
 const winner = document.getElementById("winner");
 const fields08 = document.querySelectorAll("td");
 const resetBtn = document.getElementById("resetBtn");
+const ptsX = document.getElementById("ptsX");
+const ptsO = document.getElementById("ptsO");
 // const field0 = document.getElementById("field0");
 // const field1 = document.getElementById("field1");
 // const field2 = document.getElementById("field2");
@@ -51,10 +53,6 @@ const checkWinner = () => {
     .filter((field) => field.ui.innerText === "X")
     .map((field) => field.no);
 
-  const oFields = fields
-    .filter((field) => field.ui.innerText === "O")
-    .map((field) => field.no);
-
   const didXWin = winningLines.some(
     (line) =>
       xFields.includes(line[0]) &&
@@ -62,16 +60,27 @@ const checkWinner = () => {
       xFields.includes(line[2])
   );
 
+  const oFields = fields
+    .filter((field) => field.ui.innerText === "O")
+    .map((field) => field.no);
+
   const didOWin = winningLines.some(
     (line) =>
       oFields.includes(line[0]) &&
       oFields.includes(line[1]) &&
       oFields.includes(line[2])
   );
+
+  const isDraw = fields.every((field) => field.ui.innerText !== "");
+
   if (didXWin) {
     winner.innerText = "Winner: X";
+    ptsX.innerText = Number(ptsX.innerText) + 5;
   } else if (didOWin) {
     winner.innerText = "Winner: O";
+    ptsO.innerText = Number(ptsO.innerText) + 5;
+  } else if (isDraw) {
+    winner.innerText = "draw";
   }
 };
 
@@ -79,10 +88,12 @@ const checkWinner = () => {
 
 fields.forEach((field) => {
   field.ui.addEventListener("click", (event) => {
-    event.target.innerText = currentXO;
+    if (event.target.innerText === "") {
+      event.target.innerText = currentXO;
 
-    currentXO = currentXO === "X" ? "O" : "X";
-    checkWinner();
+      currentXO = currentXO === "X" ? "O" : "X";
+      checkWinner();
+    }
   });
 });
 
